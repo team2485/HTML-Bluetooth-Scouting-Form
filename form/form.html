@@ -1,0 +1,1005 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css">
+    div {
+        overflow: visible;
+    }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Team 2485 | Scouting Form</title>
+    <!-- Path to Framework7 Library CSS-->
+    <link rel="stylesheet" href="css/framework7.ios.min.css">
+    <link rel="stylesheet" href="css/framework7.ios.colors.min.css">
+    <link rel="stylesheet" href="includes/rateyo/jquery.rateyo.min.css">
+    <!-- Path to your custom app styles-->
+
+    <script type="text/javascript" src="http://gc.kis.scr.kaspersky-labs.com/1B74BD89-2A22-4B93-B451-1C9E1052A0EC/main.js" charset="UTF-8"></script><script>
+    function getRadioValue(name) {
+        var radios = document.getElementsByName(name);
+        for (k = 0; k < radios.length; k++) {
+            if (radios[k].checked) {
+                return radios[k].value;
+            }
+        }
+        return null;
+    }
+    </script>
+    <script>
+    function displayTime(name, labelName) {
+        var x = document.getElementsByName(name)[0].value;
+        if (x == 0) {
+            document.getElementsByName(labelName)[0].innerHTML = "Enter<br/>Time"
+        } else {
+            document.getElementsByName(labelName)[0].innerHTML = "Time: " + "<br/>" + x + "(s)";
+        }
+
+    }
+    </script>
+    <script>
+    function clearStars(id) {
+        var starRating = $("#" + id).rateYo();
+        starRating.rateYo("rating", 0);
+
+    }
+    </script>
+    <script>
+    function validateForm() {
+        //First, check for noshow
+        // var NoShow = document.getElementsByName("NoShow")[0];
+        // if (NoShow.checked) {
+        //     var inputs = document.getElementsByTagName("input");
+        //     for (i = 0; i < inputs.length; i++) {
+        //         var value = inputs[i].value;
+        //         var type = inputs[i].type;
+        //         if (inputs[i].name == "NoShow" || inputs[i].name == "Name") {
+        //             continue;
+        //         }
+        //         if (inputs[i].name == "teamnumber" || inputs[i].name == "matchnumber") {
+        //             if (value == "0" || value == null || value == "") {
+        //                 alert("Please enter " + inputs[i].name);
+        //                 return false;
+        //             } else {
+        //                 continue;
+        //             }
+        //         }
+        //         if (type != "radio") {
+        //             if (type == "range") {
+        //                 document.getElementsByTagName("input")[i].min = 0;
+        //             }
+        //             document.getElementsByTagName("input")[i].value = 0;
+        //             if (type == "checkbox") {
+        //                 document.getElementsByTagName("input")[i].checked = true;
+        //             }
+
+        //         }
+        //     }
+        //     return true;
+        // }
+
+        var toConfirm = ["teamnumber", "matchnumber"];
+        for (i = 0; i < toConfirm.length; i++) {
+            var inputs = document.getElementsByName(toConfirm[i]);
+            var type = inputs[0].type;
+
+            if (type == "number") {
+                var value = inputs[0].value;
+                if (value == "0" || value == null || value == "") {
+                    alert("Please enter " + toConfirm[i]);
+                    return false;
+                }
+            }
+            //obsolete but i dont want to delete it
+            if (type == "radio") {
+                var value = getRadioValue(toConfirm[i]);
+                if (value == null || value == "") {
+                    alert("Please enter " + toConfirm[i]);
+                    return false;
+                }
+            }
+        }
+
+        //Force scout to input radio buttons if there is a value for these
+        //Otherwise zero out dependencies
+        var dependencies = [
+            ["CDFCount", "CDFTime"],
+            ["moatCount", "moatTime"],
+            ["rampartsCount", "rampartsTime"],
+            ["rockWallCount", "rockWallTime"],
+            ["roughTerraincount", "roughTerrainTime"]
+        ];
+
+        for (i = 0; i < dependencies.length; i++) {
+            var num = document.getElementsByName(dependencies[i][0]);
+            var value = num[0].value;
+            if (value == "0" || value == null || value == "") {
+                document.getElementsByName(dependencies[i][1])[0].value = 0;
+                continue;
+            } else if (document.getElementsByName(dependencies[i][1])[0].value == 0) {
+                alert("Please enter " + dependencies[i][1]);
+                return false;
+            }
+        }
+        if(( $("#Autoreach").prop("checked")==true || $("#autoDefenceCross").prop("checked")==true) && getRadioValue("autoDefence")=="None") {
+            alert("Please mark the defense your team crossed in Auto");
+            return false;
+        }
+
+        //append 0s to all relevant data
+        //freaking radio buttons
+        //NOTE: the logic to include radio buttons for this seems really convoluted so I am just going to make those NULL, aight?
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i < inputs.length; i++) {
+            var value = inputs[i].value;
+            var type = inputs[i].type;
+            if (type === "number" && (value == null || value == "")) {
+                //I don't know why you have to do it this way. You just do.
+                document.getElementsByTagName("input")[i].value = 0;
+                continue;
+            }
+            // if (type === "checkbox" && inputs[i].checked == false && value == "1") {
+            //     //wow, this is incredibly hacky
+            //     document.getElementsByTagName("input")[i].value = 0;
+            //     document.getElementsByTagName("input")[i].checked = true;
+            //     continue;
+            // }
+
+        }
+        return true;
+    }
+    </script>
+</head>
+
+<body>
+    <!-- Views-->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class-->
+        <div class="view view-main">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <!-- We have home navbar without left link-->
+                    <div class="center">STRONGHOLD 2016 Scouting Form</div>
+                </div>
+            </div>
+            <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, data-page contains page name-->
+                <div data-page="index" class="page">
+                    <!-- Scrollable page content-->
+                    <div class="page-content">
+                        <form action="https://script.google.com/macros/s/AKfycbxXFr913AZj2MhcTpE3PLhEyLZFec8B6fbN8QAzt0BY5LUr1Co1/exec" method="POST" id="form" name="form" onsubmit="return validateForm()">
+                            <div class="content-block-title">PRE MATCH</div>
+                            <div class="list-block">
+                                <!-- form start -->
+                                <!-- PREMATCH -->
+                                <ul>
+                                    <!-- Text inputs -->
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Your<br/>Name/<br/>Initials</div>
+                                                <div class="item-input">
+                                                    <input type="text"  name="Scout" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Team #</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="teamnumber" min="1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Match #</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="matchnumber" min="1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="NoShow" value="1">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title" value="false">No Show?</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="content-block-title">Betting</div>
+                            <div class = "list-block">
+                              <ul>
+                                <li>
+                                    <label class="label-radio item-content">
+                                        <input type="radio" name="winner" value="Blue" checked="checked">
+                                        <div class="item-inner">
+                                            <div class="item-title">Blue Wins</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-radio item-content">
+                                        <input type="radio" name="winner" value="Red">
+                                        <div class="item-inner">
+                                            <div class="item-title">Red Wins</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Predicted<br/>Points Scored<br/>By Winner</div>
+                                            <div class="item-input">
+                                                <input type="number" placeholder="0" name="pointsScored" min="0" max="250">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Credits Bet</div>
+                                            <div class="item-input">
+                                                <input type="number" placeholder="0" name="credits" min="0" max="10">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="content-block-title"><b>CHECK ALL THAT ARE UP</b></div>
+                            <div class="list-block">
+                              <ul>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <!-- Checked by default -->
+                                        <input type="checkbox" name="CDFUp" value="1" id="CDFUp">
+                                        <div class="item-media">
+                                            <i class="icon icon-form-checkbox"></i>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title">CDF Up</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <!-- Checked by default -->
+                                        <input type="checkbox" name="MoatUp" value="1" id="MoatUp">
+                                        <div class="item-media">
+                                            <i class="icon icon-form-checkbox"></i>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title">Moat</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <!-- Checked by default -->
+                                        <input type="checkbox" name="RampartsUp" value="1" id="RampartsUp">
+                                        <div class="item-media">
+                                            <i class="icon icon-form-checkbox"></i>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title">Ramparts</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <!-- Checked by default -->
+                                        <input type="checkbox" name="RockWallUp" value="1" id="RockWallUp">
+                                        <div class="item-media">
+                                            <i class="icon icon-form-checkbox"></i>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title">Rock Wall</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <!-- Checked by default -->
+                                        <input type="checkbox" name="RoughTerrainUp" value="1" id="RoughTerrainUp">
+                                        <div class="item-media">
+                                            <i class="icon icon-form-checkbox"></i>
+                                        </div>
+                                        <div class="item-inner">
+                                            <div class="item-title">Rough Terrain</div>
+                                        </div>
+                                    </label>
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="content-block-title">Auto</div>
+                            <div class="list-block">
+                                <ul>
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Lined up on...</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="CDF">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Cheval de Frise</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="Ramparts">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Ramparts</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="Moat">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Moat</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="RockWall">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Rock Wall</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="RoughTerrain">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Rough Terrain</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="LowBar">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Low Bar</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="Spy">
+                                                            <div class="item-inner">
+                                                                <div class="item-title">Spy</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label class="label-radio item-content">
+                                                            <input type="radio" name="autoDefence" value="None" checked>
+                                                            <div class="item-inner">
+                                                                <div class="item-title">None</div>
+                                                            </div>
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <!-- Checked by default -->
+                                            <input type="checkbox" name="Autoreach" value="1" id="Autoreach">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Reached
+                                                    <br/>Defense</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <!-- Another chekbox item -->
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="autoDefenceCross" value="1" id="autoDefenceCross">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Crossed
+                                                    <br/>Defense</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="autoHighGoals" value="1" id="autoHighGoals">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Succeed
+                                                    <br/>High Shot</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="autoHighMiss" value="1" id="autoHighMiss">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Fail
+                                                    <br/>High Shot</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="autoLowGoals" value="1" id="autoLowGoals">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Succeed
+                                                    <br/>Low Goal</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-checkbox item-content" id="LowFail">
+                                            <input type="checkbox" name="autoLowMiss" value="1" id="autoLowMiss">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">Fail
+                                                    <br/>Low Goal</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="content-block-title">TELEOP - DEFENSES</div>
+                            <div class="list-block">
+                                <!-- DEFENSES -->
+                                <ul>
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Cheval de Frise</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="CDFCount" min="0" id="CDFCount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="LabelCDF">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="CDFTime" oninput="displayTime('CDFTime','LabelCDF')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Moat</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="moatCount" min="0" id="moatCount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="Labelmoat">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="moatTime" oninput="displayTime('moatTime','Labelmoat')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Ramparts</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="rampartsCount" min="0" id="rampartsCount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="Labelramparts">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="rampartsTime" oninput="displayTime('rampartsTime','Labelramparts')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Rock Wall</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="rockWallCount" min="0" id="rockWallCount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="LabelrockWall">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="rockWallTime" oninput="displayTime('rockWallTime','LabelrockWall')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Rough Terrain</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="roughTerraincount" min="0" id="roughTerraincount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="LabelroughTerrain">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="roughTerrainTime" oninput="displayTime('roughTerrainTime','LabelroughTerrain')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                    <li class="accordion-item">
+                                        <a href="#" class="item-content item-link">
+                                            <div class="item-inner">
+                                                <div class="item-title"><u>Low Bar</u></div>
+                                            </div>
+                                        </a>
+                                        <div class="accordion-item-content">
+                                            <div class="list-block inset">
+                                                <ul>
+
+                                                    <li>
+                                                        <div class="item-content">
+                                                            <div class="item-inner">
+                                                                <div class="item-title label">#
+                                                                    <br/>Crosses</div>
+                                                                <div class="item-input">
+                                                                    <input type="number" placeholder="0" name="lowBarCount" min="0" id="lowBarCount">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <br/>
+                                                    <ul>
+                                                        <li>
+                                                            <div class="item-content">
+                                                                <div class="item-inner">
+                                                                    <div class="item-title label" name="LabelLowBar">Enter
+                                                                        <br/>Time</div>
+                                                                    <div class="item-input">
+                                                                        <div class="range-slider">
+                                                                            <input type="range" min="0" max="10" value="0" step="2" name="lowBarTime" oninput="displayTime('lowBarTime','LabelLowBar')">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                            <!-- TELEOP SHOOTING -->
+                            <div class="content-block-title">TELEOP - SHOOTING</div>
+                            <div class="list-block">
+                                <div class="list-group">
+                                <ul>
+                                    <li class="list-group-title">High Goal Shots</li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Successful
+                                                    <br/>High Goal</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="highMade" min="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Missed
+                                                    <br/>High Goal</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="highMiss" min="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    </ul>
+                                </div>
+                                <div class="list-group">
+
+                                    <ul>
+                                    <li class="list-group-title">Low Goal Shots</li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Successful
+                                                    <br/>Low Shots</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="lowMade" min="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Missed
+                                                    <br/>Low Shots</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="lowMiss" min="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            </div>
+                            <div class="content-block-title">ENDGAME</div>
+                            <!-- CASTLE CHALLENGING -->
+                            <div class="list-block">
+                                <ul>
+                                    <li>
+                                        <label class="label-radio item-content">
+                                            <!-- Checked by default -->
+                                            <input type="radio" name="Castle" value="Scale">
+                                            <div class="item-inner">
+                                                <div class="item-title">Scale</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-radio item-content">
+                                            <input type="radio" name="Castle" value="Challenged">
+                                            <div class="item-inner">
+                                                <div class="item-title">Challenged</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="label-radio item-content">
+                                            <input type="radio" name="Castle" value="Neither" checked>
+                                            <div class="item-inner">
+                                                <div class="item-title">Neither</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="content-block-title">RATINGS</div>
+                            <!-- CASTLE CHALLENGING -->
+                            <!-- This list is doubly nested. Just trust me. -->
+                            <div class="list-block">
+                                <ul>
+                                    <br/>
+                                    <li>
+                                        <div class="row no-gutter">
+                                            <div class="col-50">
+                                            <div class="item-input">
+                                                <div class="item-title label">&nbsp;&nbsp;&nbsp;Intake
+                                                    <br/>&nbsp;&nbsp;&nbsp;Speed</div>
+                                                <div id="speed"></div>
+                                                <br/>
+                                            </div>
+                                            </div>
+                                            <div class="col-50">
+                                                <p><a href="#" class="button" onclick="clearStars('speed')">Clear</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <br/>
+                                    <li>
+                                        <div class="row no-gutter">
+                                            <div class="col-50">
+                                                <div class="item-input">
+                                                    <div class="item-title label">&nbsp;&nbsp;&nbsp;Maneuver
+                                                        <br/>&nbsp;&nbsp;&nbsp;-ability</div>
+                                                    <div id="manueverability"></div>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="col-50">
+                                                <p><a href="#" class="button" onclick="clearStars('manueverability')">Clear</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <br/>
+                                    <li>
+                                        <div class="row no-gutter">
+                                            <div class="col-50">
+                                                <div class="item-input">
+                                                    <div class="item-title label">&nbsp;&nbsp;&nbsp;Driver<br/>&nbsp;&nbsp;&nbsp;Skill</div>
+                                                    <div id="driverSkill"></div>
+                                                    <br/>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-50">
+                                                <p><a href="#" class="button" onclick="clearStars('driverSkill')">Clear</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <br/>
+                                    <li>
+                                        <div class="row no-gutter">
+                                            <div class="col-50">
+                                            <div class="item-input">
+                                                <div class="item-title label">&nbsp;&nbsp;&nbsp;Defense/<br/>&nbsp;&nbsp;&nbsp;Blocking</div>
+                                                <div id="defense"></div>
+                                                <br/>
+                                            </div>
+
+                                            </div>
+                                            <div class="col-50">
+                                                <p><a href="#" class="button" onclick="clearStars('defense')">Clear</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <br/>
+                                </ul>
+                            </div>
+                            <div class="list-block">
+                                <!-- Text inputs -->
+                                <ul>
+                                    <li>
+                                        <label class="label-checkbox item-content">
+                                            <input type="checkbox" name="breakdown" value="1">
+                                            <div class="item-media">
+                                                <i class="icon icon-form-checkbox"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title" value="false">Breakdown/Disabled</div>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <div class="item-content">
+                                            <div class="item-inner">
+                                                <div class="item-title label">Fouls</div>
+                                                <div class="item-input">
+                                                    <input type="number" placeholder="0" name="otherFouls" min="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                       <div class="item-content">
+                                         <div class="item-inner">
+                                           <div class="item-title label">Comments</div>
+                                           <div class="item-input">
+                                               <textarea name="comments" class="resizable"></textarea>
+                                           </div>
+                                         </div>
+                                       </div>
+                                     </li>
+                                </ul>
+                            </div>
+                            <!-- SUBMIT -->
+                            <div class="list-block">
+                                <!-- run sendToGoogleForm on form submit -->
+                                <ul>
+                                    <li>
+                                        <input type="submit" value="Submit" class="button button-big button-green" id="submit">
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Bottom Toolbar-->
+                    </div>
+                </div>
+                </form>
+                <!-- Path to Framework7 Library JS-->
+                <script type="text/javascript" src="js/framework7.min.js"></script>
+                <!-- Path to your app js-->
+                <script type="text/javascript" src="js/my-app.js"></script>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="includes/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="includes/rateyo/jquery.rateyo.min.js"></script>
+<script type="text/javascript">
+//star stuff
+var StarSelectors = ["speed", "manueverability", "driverSkill", "defense"];
+
+
+$(function() {
+    for (i = 0; i < StarSelectors.length; i++) {
+        var currRef = "#" + StarSelectors[i];
+        $(currRef).rateYo({
+            rating: 0,
+            fullStar: true
+        });
+        //getter
+        var normalFill = $(currRef).rateYo("option", "fullStar"); //returns true
+        // Setter
+        $(currRef).rateYo("option", "fullStar", true); //returns a jQuery Element
+    }
+});
+$("#form").submit(function(eventObj) {
+    //Add star ratings to form
+    for (i = 0; i < StarSelectors.length; i++) {
+        var currRef = "#" + StarSelectors[i];
+        $('<input />').attr('type', 'hidden')
+            .attr('name', StarSelectors[i])
+            .attr('value', $(currRef).rateYo("rating").toString())
+            .appendTo('#form');
+    }
+    return true;
+});
+
+</script>
+
+</html>
